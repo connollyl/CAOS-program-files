@@ -1,0 +1,112 @@
+Word_Count
+		mov ecx, 0
+		mov [countwords], 0
+	wordcount:
+		cmp [string1 + ecx], 0x00
+		JE exit1
+		cmp [string1 + ecx], 0x20
+		inc ecx
+		JE wordcount
+		push [string1 + (ecx - 1)]
+		cmp [string1 + (ecx + 1)], 0x20
+		JNE wordcount
+		cmp [string1 + (ecx + 2)], 0x20
+		JE wordcount
+		inc [countwords]
+		jmp wordcount
+	exit1:
+		mov esp, ebp
+		pop ebp
+		ret
+Reverse_Word:
+
+
+		mov esp, ebp
+		pop ebp
+		ret
+Remove_Blank:
+		mov ecx, 0
+		mov [tempcount], 0
+	leading:	
+		cmp [string1 + ecx], 0x20
+		inc ecx
+		JE leading
+		mov [removestring + [tempcount]], [string1 + (ecx - 1)]
+		inc [tempcount]
+	duplicates:
+		cmp [string1 + ecx], 0x20
+		JNE pushchar
+		inc ecx
+		cmp [string1 + (ecx - 1)], [string1 + ecx]
+		JNE pushchar
+		inc ecx
+		jmp duplicates
+	pushchar:
+		cmp [string1[ecx]], 0x00
+		JE exit3
+		mov [removestring + tempcount], [string1 + ecx]
+		jmp duplicates
+	exit3:
+		mov eax, stringmsg
+		call print_string
+		mov eax, [string1]
+		call print_string
+		mov eax, charactermsg
+		call print_string
+		mov eax, [removestring]
+		call print_string
+		call print_nl
+		mov esp, ebp
+		pop ebp
+		ret
+segment .text
+
+Is_Palindrome:
+
+		push ebp
+		mov ebp, esp
+		mov eax, outmsg1
+		call print_string
+		;call Remove_Blank
+		mov ecx, 0
+		mov edx, 0
+		mov eax, outmsg1
+		call print_string
+	loopstack:
+		push dword[string1 + ecx]
+		inc ecx
+		cmp byte[string1 + ecx], 0x00
+		JNE loopstack
+		dec ecx
+		mov eax, outmsg1
+	reverse:
+		pop dword[palindromestr + edx]
+		inc edx
+		loop reverse
+		mov eax, outmsg1
+		mov esi, string1
+		mov edi, palindromestr
+		cmp esi, edi
+		JE equal
+	notequal:
+		mov eax, string2msg
+		call print_string
+		mov eax, [removestring]
+		call print_string
+		mov eax, isnotmsg
+		call print_string
+		mov eax, [palindromemsg]
+		call print_string
+		jmp exit4
+	equal:
+		mov eax, string2msg
+		call print_string
+		mov eax, [removestring]
+		call print_string
+		mov eax, ismsg
+		call print_string
+		mov eax, [palindromemsg]
+		call print_string
+	exit4:
+		pop ebp
+		ret
